@@ -92,74 +92,72 @@ export function ThemeToggle() {
     return () => mediaQuery.removeEventListener("change", handleSystemChange);
   }, []);
 
-  const setThemeMode = (dark: boolean) => {
-    setIsDark(dark);
+  const handleToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const nextIsDark = !isDark;
+    setIsDark(nextIsDark);
+
     try {
-      localStorage.setItem("bsai_theme", dark ? "dark" : "light");
+      localStorage.setItem("bsai_theme", nextIsDark ? "dark" : "light");
     } catch (err) {
       console.warn("Unable to save theme", err);
     }
-    applyTheme(dark);
+
+    applyTheme(nextIsDark);
   };
 
   return (
-    <div
-      role="group"
-      aria-label="Theme selector"
-      className="flex items-center p-1 rounded-full bg-slate-100/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 shadow-inner"
+    <button
+      type="button"
+      onClick={handleToggle}
+      aria-label={
+        mounted
+          ? isDark
+            ? "Switch to Light mode"
+            : "Switch to Dark mode"
+          : "Toggle theme"
+      }
+      title={
+        mounted
+          ? isDark
+            ? "Switch to Light mode (☀️)"
+            : "Switch to Dark mode (🌙)"
+          : "Toggle theme"
+      }
+      className="relative flex items-center justify-center w-10 h-10 rounded-2xl bg-slate-100/90 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700 hover:border-indigo-500/40 text-foreground transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer min-h-[44px] min-w-[44px] shadow-sm active:scale-95 group"
     >
-      {/* Sun / Light button */}
-      <button
-        type="button"
-        onClick={() => setThemeMode(false)}
-        aria-label="Light mode"
-        aria-pressed={mounted && !isDark}
-        title="Light mode"
-        className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer ${
-          mounted && !isDark
-            ? "bg-white text-amber-500 shadow-sm border border-slate-200/80 font-bold scale-105"
-            : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+      {/* Sun Icon (shown in Light mode) */}
+      <svg
+        className={`w-5 h-5 transition-transform duration-200 group-hover:rotate-45 ${
+          mounted && !isDark ? "block text-amber-500" : "hidden"
         }`}
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-        </svg>
-      </button>
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+      </svg>
 
-      {/* Moon / Dark button */}
-      <button
-        type="button"
-        onClick={() => setThemeMode(true)}
-        aria-label="Dark mode"
-        aria-pressed={mounted && isDark}
-        title="Dark mode"
-        className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer ${
-          mounted && isDark
-            ? "bg-slate-900 text-indigo-400 shadow-sm border border-slate-700 font-bold scale-105"
-            : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+      {/* Moon Icon (shown in Dark mode) */}
+      <svg
+        className={`w-5 h-5 transition-transform duration-200 group-hover:-rotate-12 ${
+          !mounted || isDark ? "block text-indigo-400" : "hidden"
         }`}
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-        </svg>
-      </button>
-    </div>
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+      </svg>
+    </button>
   );
 }

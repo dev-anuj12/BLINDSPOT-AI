@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Shield, Eye, FileText, Lock, Sparkles, Mail } from "lucide-react";
 
 export function Footer() {
-  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "contact@blindspot-ai.com";
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "anujvishwakarm@gmail.com";
 
   const openCookieSettings = (e: React.MouseEvent) => {
     e.preventDefault();
