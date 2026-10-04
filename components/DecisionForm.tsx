@@ -144,12 +144,18 @@ export function DecisionForm({ autoLoadDemo = false }: { autoLoadDemo?: boolean 
       sessionStorage.removeItem("blindspot_active_analysis");
       sessionStorage.removeItem("blindspot_active_round");
       sessionStorage.removeItem("blindspot_reflection_answers");
-
-      router.push("/results");
-    } catch (err) {
-      setIsSubmitting(false);
-      setErrors({ form: "Failed to initialize reflection session. Please try again." });
+    } catch (e) {
+      console.warn("Storage warning:", e);
     }
+
+    router.push("/results");
+
+    // Fallback if client-side router transition is blocked
+    setTimeout(() => {
+      if (window.location.pathname !== "/results") {
+        window.location.href = "/results";
+      }
+    }, 1200);
   };
 
   return (
