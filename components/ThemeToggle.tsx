@@ -16,27 +16,51 @@ export function ThemeToggle() {
       root.classList.remove("light");
       root.setAttribute("data-theme", "dark");
       root.style.colorScheme = "dark";
+      root.style.setProperty("--bg-base", "9 10 15");
+      root.style.setProperty("--surface-base", "18 20 31");
+      root.style.setProperty("--surface-raised-base", "26 29 45");
+      root.style.setProperty("--surface-hover-base", "34 39 61");
+      root.style.setProperty("--border-base", "42 48 71");
+      root.style.setProperty("--text-primary", "248 250 252");
+      root.style.setProperty("--text-muted", "148 163 184");
+      root.style.backgroundColor = "#090A0F";
+      root.style.color = "#F8FAFC";
+
       if (body) {
         body.classList.add("dark");
         body.classList.remove("light");
         body.setAttribute("data-theme", "dark");
+        body.style.backgroundColor = "#090A0F";
+        body.style.color = "#F8FAFC";
       }
     } else {
       root.classList.remove("dark");
       root.classList.add("light");
       root.setAttribute("data-theme", "light");
       root.style.colorScheme = "light";
+      root.style.setProperty("--bg-base", "248 249 250");
+      root.style.setProperty("--surface-base", "255 255 255");
+      root.style.setProperty("--surface-raised-base", "241 245 249");
+      root.style.setProperty("--surface-hover-base", "226 232 240");
+      root.style.setProperty("--border-base", "226 232 240");
+      root.style.setProperty("--text-primary", "15 23 42");
+      root.style.setProperty("--text-muted", "100 116 139");
+      root.style.backgroundColor = "#F8F9FA";
+      root.style.color = "#0F172A";
+
       if (body) {
         body.classList.remove("dark");
         body.classList.add("light");
         body.setAttribute("data-theme", "light");
+        body.style.backgroundColor = "#F8F9FA";
+        body.style.color = "#0F172A";
       }
     }
   };
 
   useEffect(() => {
     setMounted(true);
-    let initialIsDark = document.documentElement.classList.contains("dark");
+    let initialIsDark = true;
     try {
       const saved = localStorage.getItem("bsai_theme");
       if (saved === "light") {
@@ -71,17 +95,14 @@ export function ThemeToggle() {
   const handleToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    // Check live DOM state to never fall out of sync
-    const currentIsDark = document.documentElement.classList.contains("dark");
-    const nextIsDark = !currentIsDark;
-    
+
+    const nextIsDark = !isDark;
     setIsDark(nextIsDark);
 
     try {
       localStorage.setItem("bsai_theme", nextIsDark ? "dark" : "light");
     } catch (err) {
-      console.warn("Unable to save theme preference", err);
+      console.warn("Unable to save theme", err);
     }
 
     applyTheme(nextIsDark);
@@ -94,30 +115,34 @@ export function ThemeToggle() {
       aria-label={
         mounted
           ? isDark
-            ? "Switch to Light mode"
-            : "Switch to Dark mode"
+            ? "Switch to Light theme"
+            : "Switch to Dark theme"
           : "Toggle theme"
       }
       title={
         mounted
           ? isDark
-            ? "Click to switch to Light mode (☀️)"
-            : "Click to switch to Dark mode (🌙)"
+            ? "Switch to Light theme (☀️)"
+            : "Switch to Dark theme (🌙)"
           : "Toggle theme"
       }
-      className="relative inline-flex items-center justify-center p-1 rounded-full w-[74px] h-[40px] min-h-[44px] min-w-[44px] bg-surface-raised border border-border hover:border-indigo-500/50 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer select-none shadow-sm"
+      className={`relative inline-flex items-center p-1 rounded-full w-[76px] h-[40px] min-h-[44px] min-w-[44px] border transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer select-none shadow-sm ${
+        !mounted || isDark
+          ? "bg-slate-900/90 border-slate-700"
+          : "bg-slate-200/90 border-slate-300"
+      }`}
     >
       {/* Background Track Icons */}
       <div className="absolute inset-0 flex items-center justify-between px-2.5 pointer-events-none">
         {/* Sun on left */}
         <svg
-          className={`w-4 h-4 transition-colors duration-200 ${
-            !mounted || isDark ? "text-text-muted/40" : "text-amber-500 font-bold"
+          className={`w-4 h-4 transition-all duration-300 ${
+            !mounted || isDark ? "text-slate-500 opacity-40 scale-75" : "text-amber-500 opacity-100 scale-100 font-bold"
           }`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
-          strokeWidth="2.2"
+          strokeWidth="2.4"
           strokeLinecap="round"
           strokeLinejoin="round"
         >
@@ -127,13 +152,13 @@ export function ThemeToggle() {
 
         {/* Moon on right */}
         <svg
-          className={`w-4 h-4 transition-colors duration-200 ${
-            !mounted || isDark ? "text-indigo-400 font-bold" : "text-text-muted/40"
+          className={`w-4 h-4 transition-all duration-300 ${
+            !mounted || isDark ? "text-indigo-400 opacity-100 scale-100 font-bold" : "text-slate-400 opacity-40 scale-75"
           }`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
-          strokeWidth="2.2"
+          strokeWidth="2.4"
           strokeLinecap="round"
           strokeLinejoin="round"
         >
@@ -145,17 +170,17 @@ export function ThemeToggle() {
       <span
         className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center shadow-md border transition-all duration-300 transform pointer-events-none ${
           !mounted || isDark
-            ? "translate-x-4 bg-surface-base border-indigo-500/70 text-indigo-400 shadow-indigo-500/20"
-            : "-translate-x-4 bg-white border-amber-400/90 text-amber-500 shadow-amber-500/30"
+            ? "translate-x-9 bg-slate-950 border-indigo-500/80 text-indigo-400 shadow-indigo-500/20"
+            : "translate-x-0.5 bg-white border-amber-400/90 text-amber-500 shadow-amber-500/30"
         }`}
       >
         {!mounted || isDark ? (
           <svg
-            className="w-4 h-4"
+            className="w-3.5 h-3.5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
-            strokeWidth="2.2"
+            strokeWidth="2.4"
             strokeLinecap="round"
             strokeLinejoin="round"
           >
@@ -163,11 +188,11 @@ export function ThemeToggle() {
           </svg>
         ) : (
           <svg
-            className="w-4 h-4"
+            className="w-3.5 h-3.5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
-            strokeWidth="2.2"
+            strokeWidth="2.4"
             strokeLinecap="round"
             strokeLinejoin="round"
           >
