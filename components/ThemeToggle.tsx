@@ -2,22 +2,16 @@
 
 import { useEffect, useState } from "react";
 
-export type ThemeMode = "light" | "dark" | "system";
-
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<ThemeMode>("system");
-  const [mounted, setMounted] = useState(false);
+  const [isDark, setIsDark] = useState<boolean>(true);
+  const [mounted, setMounted] = useState<boolean>(false);
 
-  const applyTheme = (mode: ThemeMode) => {
+  const applyTheme = (dark: boolean) => {
     if (typeof window === "undefined") return;
-    
     const root = document.documentElement;
     const body = document.body;
-    const isDark =
-      mode === "dark" ||
-      (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
-    if (isDark) {
+    if (dark) {
       root.classList.add("dark");
       root.classList.remove("light");
       root.setAttribute("data-theme", "dark");
@@ -38,66 +32,67 @@ export function ThemeToggle() {
 
   useEffect(() => {
     setMounted(true);
-    let initialMode: ThemeMode = "system";
+    let initialIsDark = true;
+
     try {
-      const saved = localStorage.getItem("bsai_theme") as ThemeMode | null;
-      if (saved === "light" || saved === "dark" || saved === "system") {
-        initialMode = saved;
+      const saved = localStorage.getItem("bsai_theme");
+      if (saved === "light") {
+        initialIsDark = false;
+      } else if (saved === "dark") {
+        initialIsDark = true;
+      } else {
+        // Default based on system preference
+        initialIsDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       }
     } catch {
-      initialMode = "system";
+      initialIsDark = true;
     }
 
-    setTheme(initialMode);
-    applyTheme(initialMode);
-
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleSystemChange = () => {
-      try {
-        const currentSaved = localStorage.getItem("bsai_theme") as ThemeMode | null;
-        if (!currentSaved || currentSaved === "system") {
-          applyTheme("system");
-        }
-      } catch {
-        applyTheme("system");
-      }
-    };
-
-    mediaQuery.addEventListener("change", handleSystemChange);
-    return () => mediaQuery.removeEventListener("change", handleSystemChange);
+    setIsDark(initialIsDark);
+    applyTheme(initialIsDark);
   }, []);
 
-  const handleSelectTheme = (mode: ThemeMode) => {
-    setTheme(mode);
+  const handleToggle = () => {
+    const nextDarkState = !isDark;
+    setIsDark(nextDarkState);
+
+    const mode = nextDarkState ? "dark" : "light";
     try {
       localStorage.setItem("bsai_theme", mode);
     } catch (e) {
-      console.warn("Unable to save theme to localStorage", e);
+      console.warn("Unable to save theme", e);
     }
-    applyTheme(mode);
+
+    applyTheme(nextDarkState);
   };
 
   return (
-    <div
-      role="group"
-      aria-label="Theme selector"
-      className="flex items-center p-1 rounded-2xl bg-surface-raised border border-border shadow-sm transition-colors duration-200"
+    <button
+      type="button"
+      onClick={handleToggle}
+      aria-label={
+        mounted
+          ? isDark
+            ? "Switch to Light mode"
+            : "Switch to Dark mode"
+          : "Toggle theme"
+      }
+      title={
+        mounted
+          ? isDark
+            ? "Switch to Light mode (☀️)"
+            : "Switch to Dark mode (🌙)"
+          : "Toggle theme"
+      }
+      className="relative inline-flex items-center justify-center p-1 rounded-full w-[72px] h-[38px] min-h-[44px] min-w-[44px] bg-surface-raised border border-border hover:border-indigo-500/50 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer shadow-inner"
     >
-      {/* Light Mode Button */}
-      <button
-        type="button"
-        onClick={() => handleSelectTheme("light")}
-        aria-label="Light theme"
-        aria-pressed={mounted && theme === "light"}
-        title="Switch to Light theme"
-        className={`relative flex items-center justify-center w-10 h-10 sm:w-9 sm:h-9 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 min-h-[44px] min-w-[44px] sm:min-h-[36px] sm:min-w-[36px] cursor-pointer ${
-          mounted && theme === "light"
-            ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/40 shadow-sm"
-            : "text-text-muted hover:text-foreground hover:bg-surface-hover"
-        }`}
-      >
+      {/* Background Track Icons */}
+      <div className="absolute inset-0 flex items-center justify-between px-2.5 pointer-events-none">
+        {/* Sun on left */}
         <svg
-          className="w-4 h-4 sm:w-4 sm:h-4 transition-transform active:scale-90"
+          className={`w-4 h-4 transition-opacity duration-200 ${
+            !mounted || isDark ? "text-text-muted/40" : "text-amber-500 opacity-100"
+          }`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -108,23 +103,12 @@ export function ThemeToggle() {
           <circle cx="12" cy="12" r="4" />
           <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
         </svg>
-      </button>
 
-      {/* Dark Mode Button */}
-      <button
-        type="button"
-        onClick={() => handleSelectTheme("dark")}
-        aria-label="Dark theme"
-        aria-pressed={mounted && theme === "dark"}
-        title="Switch to Dark theme"
-        className={`relative flex items-center justify-center w-10 h-10 sm:w-9 sm:h-9 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 min-h-[44px] min-w-[44px] sm:min-h-[36px] sm:min-w-[36px] cursor-pointer ${
-          mounted && theme === "dark"
-            ? "bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 font-bold border border-indigo-500/40 shadow-sm"
-            : "text-text-muted hover:text-foreground hover:bg-surface-hover"
-        }`}
-      >
+        {/* Moon on right */}
         <svg
-          className="w-4 h-4 sm:w-4 sm:h-4 transition-transform active:scale-90"
+          className={`w-4 h-4 transition-opacity duration-200 ${
+            !mounted || isDark ? "text-indigo-400 opacity-100" : "text-text-muted/40"
+          }`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -134,35 +118,43 @@ export function ThemeToggle() {
         >
           <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
         </svg>
-      </button>
+      </div>
 
-      {/* System Mode Button */}
-      <button
-        type="button"
-        onClick={() => handleSelectTheme("system")}
-        aria-label="System theme"
-        aria-pressed={mounted && theme === "system"}
-        title="Follow system theme"
-        className={`relative flex items-center justify-center w-10 h-10 sm:w-9 sm:h-9 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 min-h-[44px] min-w-[44px] sm:min-h-[36px] sm:min-w-[36px] cursor-pointer ${
-          mounted && theme === "system"
-            ? "bg-purple-500/15 text-purple-600 dark:text-purple-300 font-bold border border-purple-500/40 shadow-sm"
-            : "text-text-muted hover:text-foreground hover:bg-surface-hover"
+      {/* Sliding Thumb Knob */}
+      <span
+        className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center shadow-md border transition-all duration-300 transform ${
+          !mounted || isDark
+            ? "translate-x-4 bg-indigo-950 border-indigo-500/60 text-indigo-300"
+            : "-translate-x-4 bg-white border-amber-400/80 text-amber-500 shadow-amber-500/10"
         }`}
       >
-        <svg
-          className="w-4 h-4 sm:w-4 sm:h-4 transition-transform active:scale-90"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <rect width="20" height="14" x="2" y="3" rx="2" />
-          <line x1="8" x2="16" y1="21" y2="21" />
-          <line x1="12" x2="12" y1="17" y2="21" />
-        </svg>
-      </button>
-    </div>
+        {!mounted || isDark ? (
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+        ) : (
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+          </svg>
+        )}
+      </span>
+    </button>
   );
 }
