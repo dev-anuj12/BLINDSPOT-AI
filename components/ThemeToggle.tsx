@@ -15,25 +15,28 @@ export function ThemeToggle() {
       root.classList.add("dark");
       root.classList.remove("light");
       root.setAttribute("data-theme", "dark");
+      root.style.colorScheme = "dark";
       if (body) {
         body.classList.add("dark");
         body.classList.remove("light");
+        body.setAttribute("data-theme", "dark");
       }
     } else {
       root.classList.remove("dark");
       root.classList.add("light");
       root.setAttribute("data-theme", "light");
+      root.style.colorScheme = "light";
       if (body) {
         body.classList.remove("dark");
         body.classList.add("light");
+        body.setAttribute("data-theme", "light");
       }
     }
   };
 
   useEffect(() => {
     setMounted(true);
-    let initialIsDark = true;
-
+    let initialIsDark = document.documentElement.classList.contains("dark");
     try {
       const saved = localStorage.getItem("bsai_theme");
       if (saved === "light") {
@@ -41,7 +44,6 @@ export function ThemeToggle() {
       } else if (saved === "dark") {
         initialIsDark = true;
       } else {
-        // Default based on system preference
         initialIsDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       }
     } catch {
@@ -50,20 +52,39 @@ export function ThemeToggle() {
 
     setIsDark(initialIsDark);
     applyTheme(initialIsDark);
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleSystemChange = (e: MediaQueryListEvent) => {
+      try {
+        const saved = localStorage.getItem("bsai_theme");
+        if (!saved || saved === "system") {
+          setIsDark(e.matches);
+          applyTheme(e.matches);
+        }
+      } catch {}
+    };
+
+    mediaQuery.addEventListener("change", handleSystemChange);
+    return () => mediaQuery.removeEventListener("change", handleSystemChange);
   }, []);
 
-  const handleToggle = () => {
-    const nextDarkState = !isDark;
-    setIsDark(nextDarkState);
+  const handleToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Check live DOM state to never fall out of sync
+    const currentIsDark = document.documentElement.classList.contains("dark");
+    const nextIsDark = !currentIsDark;
+    
+    setIsDark(nextIsDark);
 
-    const mode = nextDarkState ? "dark" : "light";
     try {
-      localStorage.setItem("bsai_theme", mode);
-    } catch (e) {
-      console.warn("Unable to save theme", e);
+      localStorage.setItem("bsai_theme", nextIsDark ? "dark" : "light");
+    } catch (err) {
+      console.warn("Unable to save theme preference", err);
     }
 
-    applyTheme(nextDarkState);
+    applyTheme(nextIsDark);
   };
 
   return (
@@ -80,18 +101,18 @@ export function ThemeToggle() {
       title={
         mounted
           ? isDark
-            ? "Switch to Light mode (☀️)"
-            : "Switch to Dark mode (🌙)"
+            ? "Click to switch to Light mode (☀️)"
+            : "Click to switch to Dark mode (🌙)"
           : "Toggle theme"
       }
-      className="relative inline-flex items-center justify-center p-1 rounded-full w-[72px] h-[38px] min-h-[44px] min-w-[44px] bg-surface-raised border border-border hover:border-indigo-500/50 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer shadow-inner"
+      className="relative inline-flex items-center justify-center p-1 rounded-full w-[74px] h-[40px] min-h-[44px] min-w-[44px] bg-surface-raised border border-border hover:border-indigo-500/50 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer select-none shadow-sm"
     >
       {/* Background Track Icons */}
       <div className="absolute inset-0 flex items-center justify-between px-2.5 pointer-events-none">
         {/* Sun on left */}
         <svg
-          className={`w-4 h-4 transition-opacity duration-200 ${
-            !mounted || isDark ? "text-text-muted/40" : "text-amber-500 opacity-100"
+          className={`w-4 h-4 transition-colors duration-200 ${
+            !mounted || isDark ? "text-text-muted/40" : "text-amber-500 font-bold"
           }`}
           fill="none"
           stroke="currentColor"
@@ -106,8 +127,8 @@ export function ThemeToggle() {
 
         {/* Moon on right */}
         <svg
-          className={`w-4 h-4 transition-opacity duration-200 ${
-            !mounted || isDark ? "text-indigo-400 opacity-100" : "text-text-muted/40"
+          className={`w-4 h-4 transition-colors duration-200 ${
+            !mounted || isDark ? "text-indigo-400 font-bold" : "text-text-muted/40"
           }`}
           fill="none"
           stroke="currentColor"
@@ -122,10 +143,10 @@ export function ThemeToggle() {
 
       {/* Sliding Thumb Knob */}
       <span
-        className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center shadow-md border transition-all duration-300 transform ${
+        className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center shadow-md border transition-all duration-300 transform pointer-events-none ${
           !mounted || isDark
-            ? "translate-x-4 bg-indigo-950 border-indigo-500/60 text-indigo-300"
-            : "-translate-x-4 bg-white border-amber-400/80 text-amber-500 shadow-amber-500/10"
+            ? "translate-x-4 bg-surface-base border-indigo-500/70 text-indigo-400 shadow-indigo-500/20"
+            : "-translate-x-4 bg-white border-amber-400/90 text-amber-500 shadow-amber-500/30"
         }`}
       >
         {!mounted || isDark ? (

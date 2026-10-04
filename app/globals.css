@@ -7,15 +7,15 @@
   html.light,
   html[data-theme="light"],
   body.light {
-    --bg-base: #F8F9FA;
-    --surface-base: #FFFFFF;
-    --surface-raised-base: #F1F5F9;
-    --surface-hover-base: #E2E8F0;
-    --border-base: #E2E8F0;
+    --bg-base: 248 249 250; /* #F8F9FA */
+    --surface-base: 255 255 255; /* #FFFFFF */
+    --surface-raised-base: 241 245 249; /* #F1F5F9 */
+    --surface-hover-base: 226 232 240; /* #E2E8F0 */
+    --border-base: 226 232 240; /* #E2E8F0 */
     --border-glow: rgba(99, 102, 241, 0.15);
-    --text-primary: #0F172A;
-    --text-secondary: #334155;
-    --text-muted: #64748B;
+    --text-primary: 15 23 42; /* #0F172A */
+    --text-secondary: 51 65 85; /* #334155 */
+    --text-muted: 100 116 139; /* #64748B */
     --radar-orbit-1: rgba(99, 102, 241, 0.15);
     --radar-orbit-2: rgba(168, 85, 247, 0.15);
     --radar-orbit-3: rgba(244, 63, 94, 0.15);
@@ -27,15 +27,15 @@
   html.dark,
   html[data-theme="dark"],
   body.dark {
-    --bg-base: #090A0F;
-    --surface-base: #12141F;
-    --surface-raised-base: #1A1D2D;
-    --surface-hover-base: #22273D;
-    --border-base: #2A3047;
+    --bg-base: 9 10 15; /* #090A0F */
+    --surface-base: 18 20 31; /* #12141F */
+    --surface-raised-base: 26 29 45; /* #1A1D2D */
+    --surface-hover-base: 34 39 61; /* #22273D */
+    --border-base: 42 48 71; /* #2A3047 */
     --border-glow: rgba(99, 102, 241, 0.3);
-    --text-primary: #F8FAFC;
-    --text-secondary: #E2E8F0;
-    --text-muted: #94A3B8;
+    --text-primary: 248 250 252; /* #F8FAFC */
+    --text-secondary: 226 232 240; /* #E2E8F0 */
+    --text-muted: 148 163 184; /* #94A3B8 */
     --radar-orbit-1: rgba(99, 102, 241, 0.3);
     --radar-orbit-2: rgba(168, 85, 247, 0.3);
     --radar-orbit-3: rgba(244, 63, 94, 0.2);
@@ -44,14 +44,14 @@
   }
 
   html {
-    background-color: var(--bg-base);
-    color: var(--text-primary);
+    background-color: rgb(var(--bg-base));
+    color: rgb(var(--text-primary));
     scroll-behavior: smooth;
   }
 
   body {
-    background-color: var(--bg-base);
-    color: var(--text-primary);
+    background-color: rgb(var(--bg-base));
+    color: rgb(var(--text-primary));
     @apply antialiased selection:bg-indigo-500 selection:text-white transition-colors duration-200;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
