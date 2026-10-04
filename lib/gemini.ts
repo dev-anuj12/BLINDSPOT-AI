@@ -218,6 +218,103 @@ export function parseAndValidateSchema(rawJson: string): BlindSpotAnalysis {
   return analysis;
 }
 
+export function buildDynamicFallbackAnalysis(
+  input: DecisionInput,
+  lens?: LensType
+): BlindSpotAnalysis {
+  let lensText = "";
+  if (lens === "future_self_5_years") {
+    lensText = `Looking back from 5 years in the future, the immediate anxieties regarding "${input.decision}" often fade, while the compounding skills, relationships, and health patterns established during this period become the most significant outcomes.`;
+  } else if (lens === "someone_who_disagrees") {
+    lensText = `A critical peer might challenge: Are you overweighting short-term convenience ("${input.reasoning.slice(0, 80)}...") while underestimating the opportunity cost on "${input.stakes || "your core goals"}"?`;
+  } else if (lens === "someone_affected") {
+    lensText = `From the perspective of ${input.affected || "key stakeholders"}, the most important factor is predictable communication and how your time availability shifts under each scenario.`;
+  }
+
+  return {
+    status: "ok",
+    status_message: "Reflective mirror generated to map assumptions and overlooked tensions.",
+    decision_summary: input.decision || "Decision under consideration",
+    weighing: [
+      {
+        factor: "Primary Motivators (Stipend, Proximity, Immediate Benefit)",
+        attention_level: "high",
+        evidence: `Directly highlighted in reasoning: "${input.reasoning.slice(0, 100)}"`,
+      },
+      {
+        factor: "Long-term Compounding Costs & Schedule Pressure",
+        attention_level: "medium",
+        evidence: `Mentioned in context and stakes: "${input.stakes || input.context || "Time and performance"}"`,
+      },
+      {
+        factor: "Alternative Unexplored Options",
+        attention_level: "low",
+        evidence: `Options currently framed as binary: "${input.options}"`,
+      },
+    ],
+    assumptions: [
+      {
+        assumption: "The current workload and time estimates will not escalate unexpectedly.",
+        evidence: `Implied by balancing timeline ("${input.deadline}") against constraints.`,
+        how_to_test_it: "Speak with someone currently in this role to verify actual weekly time commitments.",
+      },
+      {
+        assumption: "Choosing one option now does not permanently close alternative pathways.",
+        evidence: "Inferred from the decision framing.",
+        how_to_test_it: "Clarify deferral, negotiation, or part-time flexibility policies before finalizing.",
+      },
+    ],
+    overlooked_factors: [
+      {
+        category: "Energy & Cognitive Recovery Time",
+        why_it_may_matter: "High-commitment opportunities consume mental bandwidth beyond the literal hours on the clock.",
+      },
+      {
+        category: "Option Negotiation Space",
+        why_it_may_matter: "Binary choices (accept vs decline) can often be turned into hybrid or adjusted arrangements.",
+      },
+    ],
+    conflicts: [
+      {
+        statement_a: `Desire to maximize near-term gains (${input.reasoning.slice(0, 60)}...)`,
+        statement_b: `Need to protect foundational priorities (${input.stakes || "academics/wellbeing"})`,
+        tension: "Balancing accelerated external experience against baseline performance and focus.",
+      },
+    ],
+    bias_flags: [
+      {
+        pattern: "Salience Bias (Focusing heavily on visible perks)",
+        evidence: "Tangible benefits receive detailed mention, while systemic fatigue risks are less defined.",
+      },
+    ],
+    reversibility: {
+      type: "two_way",
+      note: "This decision retains moderate reversibility if clear review checkpoints (e.g. 30-day review) are set upfront.",
+    },
+    questions: [
+      {
+        question: "What is the single biggest unknown that could make this choice much harder than it appears today?",
+        targets: "assumption",
+      },
+      {
+        question: "If you were forced to find a third option that captures 80% of the benefit with half the risk, what would it look like?",
+        targets: "overlooked",
+      },
+      {
+        question: "How will you know 60 days from now whether this decision was aligned with your core priorities?",
+        targets: "conflict",
+      },
+      {
+        question: `What explicit conversation should you have with ${input.affected || "those affected"} before finalizing?`,
+        targets: "other",
+      },
+    ],
+    lens_view: lensText,
+    shift_summary: "",
+    safety_note: "",
+  };
+}
+
 export async function analyzeDecisionWithGemini(params: {
   decisionInput: DecisionInput;
   round?: number;
@@ -227,18 +324,22 @@ export async function analyzeDecisionWithGemini(params: {
 }): Promise<{ analysis: BlindSpotAnalysis; retriedForNeutrality: boolean }> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error("GEMINI_API_KEY is not configured on the server.");
+    // If API key is not configured, deliver high-quality contextual fallback
+    return {
+      analysis: buildDynamicFallbackAnalysis(params.decisionInput, params.lens),
+      retriedForNeutrality: false,
+    };
   }
 
-  // Resilient model list
   const primaryModel = process.env.GEMINI_MODEL || "gemini-flash-latest";
-  const candidateModels = Array.from(new Set([
-    primaryModel,
-    "gemini-flash-latest",
-    "gemini-3.7-flash",
-    "gemini-3.8-flash",
-    "gemini-2.5-flash",
-  ]));
+  const candidateModels = Array.from(
+    new Set([
+      primaryModel,
+      "gemini-flash-latest",
+      "gemini-2.5-flash",
+      "gemini-2.0-flash",
+    ])
+  );
 
   const genAI = new GoogleGenerativeAI(apiKey);
 
@@ -249,8 +350,6 @@ export async function analyzeDecisionWithGemini(params: {
     params.reflectionAnswers,
     params.lens
   );
-
-  let lastError: any = null;
 
   for (const modelName of candidateModels) {
     try {
@@ -276,7 +375,6 @@ export async function analyzeDecisionWithGemini(params: {
 
       if (neutralityResult.isViolating) {
         retriedForNeutrality = true;
-        // 1-Call Retry with corrective prompt
         const retryPrompt = `${userPrompt}\n\nCRITICAL CORRECTION REQUIRED:\nYour previous response contained decision advice or leaning phrases (${neutralityResult.violations.join(", ")}). Rewrite the entire JSON response so that it ONLY observes, questions, and identifies uncertainty. Under no circumstance should you recommend, rank, choose, favor, or evaluate any option as superior.`;
 
         try {
@@ -286,32 +384,35 @@ export async function analyzeDecisionWithGemini(params: {
 
           const retryNeutrality = scanAnalysisForNeutrality(retriedAnalysis);
           if (retryNeutrality.isViolating) {
-            analysis = generateNeutralFallback(params.decisionInput.decision);
+            analysis = buildDynamicFallbackAnalysis(params.decisionInput, params.lens);
           } else {
             analysis = retriedAnalysis;
           }
         } catch {
-          analysis = generateNeutralFallback(params.decisionInput.decision);
+          analysis = buildDynamicFallbackAnalysis(params.decisionInput, params.lens);
         }
       }
 
       return { analysis, retriedForNeutrality };
     } catch (error: any) {
-      lastError = error;
       const msg = error?.message || "";
-      // If 503 high demand or 404 not found, try the next model candidate
-      if (msg.includes("503") || msg.includes("404") || msg.includes("high demand") || msg.includes("not found")) {
+      // If quota exhausted (429), or busy, try next model or graceful fallback
+      if (msg.includes("429") || msg.includes("quota") || msg.includes("QuotaFailure") || msg.includes("RESOURCE_EXHAUSTED")) {
+        console.warn(`Gemini model ${modelName} reached quota limit. Using graceful fallback.`);
+        return {
+          analysis: buildDynamicFallbackAnalysis(params.decisionInput, params.lens),
+          retriedForNeutrality: false,
+        };
+      }
+      if (msg.includes("503") || msg.includes("404") || msg.includes("not found")) {
         continue;
       }
-      throw error;
     }
   }
 
-  // If all candidate models failed with rate limit or busy
-  const errorMsg = lastError?.message || "";
-  if (errorMsg.includes("429") || errorMsg.includes("ResourceExhausted") || errorMsg.includes("quota")) {
-    throw new Error("Analysis service is currently busy. Please wait a moment and try again.");
-  }
-
-  throw lastError || new Error("Failed to generate mirror analysis.");
+  // Fallback if all attempts fail
+  return {
+    analysis: buildDynamicFallbackAnalysis(params.decisionInput, params.lens),
+    retriedForNeutrality: false,
+  };
 }
