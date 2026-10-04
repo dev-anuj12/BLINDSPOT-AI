@@ -97,7 +97,7 @@ export default function HomePage() {
       </section>
 
       {/* 3-Step Strip: Describe -> See blind spots -> Reflect */}
-      <section className="py-16 bg-surface-raised/50 border-y border-border transition-colors duration-200">
+      <section className="py-16 bg-surface-raised/50 border-y border-slate-200/70 dark:border-slate-800/80 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">

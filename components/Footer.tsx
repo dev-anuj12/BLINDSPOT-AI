@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Shield, Eye, FileText, Lock, Sparkles, Mail } from "lucide-react";
+import { Shield, FileText, Lock, Mail } from "lucide-react";
 
 export function Footer() {
   const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "anujvishwakarm@gmail.com";
@@ -12,9 +12,9 @@ export function Footer() {
   };
 
   return (
-    <footer className="w-full bg-surface border-t border-border mt-auto text-text-muted transition-colors duration-200">
+    <footer className="w-full bg-surface border-t border-slate-200/70 dark:border-slate-800/80 mt-auto text-text-muted transition-colors duration-200">
       {/* Required hard-rule disclaimer banner */}
-      <div className="bg-indigo-50 dark:bg-indigo-950/40 border-b border-indigo-100 dark:border-indigo-900/40 py-3.5 px-4 sm:px-6">
+      <div className="bg-indigo-50/70 dark:bg-indigo-950/40 border-b border-indigo-100/70 dark:border-indigo-900/40 py-3.5 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 text-center text-xs text-indigo-700 dark:text-indigo-300 font-medium">
           <Shield className="w-4 h-4 text-indigo-500 dark:text-indigo-400 flex-shrink-0" />
           <span>
@@ -95,11 +95,12 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-border mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted">
+        {/* Soft, clean divider line without harsh black tone */}
+        <div className="border-t border-slate-200/60 dark:border-slate-800/80 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted">
           <p>© 2026 BlindSpot AI. All rights reserved. Server-side AI processing only.</p>
           <p className="flex items-center gap-2">
             <span>Non-Advisory Architecture</span>
-            <span className="w-1 h-1 rounded-full bg-border" />
+            <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
             <span>Structured JSON Mirror</span>
           </p>
         </div>
