@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Eye, Shield, Compass, Sparkles } from "lucide-react";
+import { Shield, Sparkles } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 
 export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-background/80 border-b border-border transition-colors duration-200">
+    <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-background/90 border-b border-border transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <Link
@@ -62,13 +62,13 @@ export function Header() {
               <span className="hidden sm:inline">Privacy</span>
             </Link>
 
-            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-surface-raised border border-border text-text-muted">
+            <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-surface-raised border border-border text-text-muted font-medium">
               <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
               <span>Zero-Advice Rule Active</span>
             </div>
           </nav>
 
-          {/* Theme Toggle Button */}
+          {/* Theme Toggle Pill */}
           <ThemeToggle />
         </div>
       </div>
