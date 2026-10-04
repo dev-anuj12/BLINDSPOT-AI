@@ -90,21 +90,21 @@ export default function ResultsPage() {
   // Case 1: No decision input found in session
   if (!isLoading && !decisionInput) {
     return (
-      <div className="py-20 px-4 max-w-lg mx-auto text-center space-y-6">
-        <div className="w-16 h-16 rounded-3xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 mx-auto">
+      <div className="py-20 px-4 max-w-lg mx-auto text-center space-y-6 transition-colors duration-200">
+        <div className="w-16 h-16 rounded-3xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 mx-auto shadow-sm">
           <AlertCircle className="w-8 h-8" />
         </div>
         <div className="space-y-2">
-          <h2 className="text-xl font-bold text-white font-display">
+          <h2 className="text-xl font-bold text-foreground font-display">
             No Active Decision Found
           </h2>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-text-muted">
             Please provide the details of the decision you are considering to generate your blind spot mirror.
           </p>
         </div>
         <Link
           href="/analyze"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all min-h-[44px]"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all min-h-[44px] shadow-sm"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Describe a Decision</span>
@@ -116,29 +116,29 @@ export default function ResultsPage() {
   // Case 2: Error occurred during analysis
   if (!isLoading && errorMessage) {
     return (
-      <div className="py-20 px-4 max-w-lg mx-auto text-center space-y-6">
-        <div className="w-16 h-16 rounded-3xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 mx-auto">
+      <div className="py-20 px-4 max-w-lg mx-auto text-center space-y-6 transition-colors duration-200">
+        <div className="w-16 h-16 rounded-3xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-600 dark:text-rose-400 mx-auto shadow-sm">
           <AlertCircle className="w-8 h-8" />
         </div>
         <div className="space-y-2">
-          <h2 className="text-xl font-bold text-white font-display">
+          <h2 className="text-xl font-bold text-foreground font-display">
             Reflection Interrupted
           </h2>
-          <p className="text-sm text-gray-300 leading-relaxed">
+          <p className="text-sm text-foreground/90 leading-relaxed">
             {errorMessage}
           </p>
         </div>
         <div className="flex items-center justify-center gap-4">
           <button
             onClick={handleRetry}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all min-h-[44px]"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all min-h-[44px] shadow-sm"
           >
             <RefreshCw className="w-4 h-4" />
             <span>Try Analysis Again</span>
           </button>
           <Link
             href="/analyze"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-surface-raised hover:bg-surface-hover text-gray-300 border border-border font-semibold text-sm transition-all min-h-[44px]"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-surface-raised hover:bg-surface-hover text-foreground border border-border font-semibold text-sm transition-all min-h-[44px] shadow-sm"
           >
             Edit Inputs
           </Link>

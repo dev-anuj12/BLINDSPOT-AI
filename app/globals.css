@@ -4,12 +4,41 @@
 
 @layer base {
   :root {
-    --background: 9 10 15;
-    --foreground: 248 250 252;
+    --bg-base: #F8F9FA;
+    --surface-base: #FFFFFF;
+    --surface-raised-base: #F1F5F9;
+    --surface-hover-base: #E2E8F0;
+    --border-base: #E2E8F0;
+    --border-glow: rgba(99, 102, 241, 0.15);
+    --text-primary: #0F172A;
+    --text-secondary: #334155;
+    --text-muted: #64748B;
+    --radar-orbit-1: rgba(99, 102, 241, 0.15);
+    --radar-orbit-2: rgba(168, 85, 247, 0.15);
+    --radar-orbit-3: rgba(244, 63, 94, 0.15);
+    --radar-sweep: rgba(99, 102, 241, 0.08);
+  }
+
+  .dark {
+    --bg-base: #090A0F;
+    --surface-base: #12141F;
+    --surface-raised-base: #1A1D2D;
+    --surface-hover-base: #22273D;
+    --border-base: #2A3047;
+    --border-glow: rgba(99, 102, 241, 0.3);
+    --text-primary: #F8FAFC;
+    --text-secondary: #E2E8F0;
+    --text-muted: #94A3B8;
+    --radar-orbit-1: rgba(99, 102, 241, 0.3);
+    --radar-orbit-2: rgba(168, 85, 247, 0.3);
+    --radar-orbit-3: rgba(244, 63, 94, 0.2);
+    --radar-sweep: rgba(99, 102, 241, 0.2);
   }
 
   body {
-    @apply bg-background text-gray-100 antialiased selection:bg-indigo-500 selection:text-white;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    @apply antialiased selection:bg-indigo-500 selection:text-white transition-colors duration-200;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 

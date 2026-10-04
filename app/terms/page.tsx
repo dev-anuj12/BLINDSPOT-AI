@@ -11,35 +11,35 @@ export default function TermsPage() {
   const lastUpdated = "October 2026";
 
   return (
-    <div className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-12">
+    <div className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-12 transition-colors duration-200">
       {/* Header */}
-      <div className="space-y-3 text-center sm:text-left border-b border-border/80 pb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">
+      <div className="space-y-3 text-center sm:text-left border-b border-border pb-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30">
           <FileText className="w-3.5 h-3.5" />
           <span>LEGAL & USE TERMS</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-display">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground font-display">
           Terms of Service
         </h1>
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-text-muted">
           Last Updated: {lastUpdated}
         </p>
       </div>
 
       {/* Critical Non-Advisory Notice Banner */}
-      <div className="p-6 rounded-2xl bg-indigo-950/40 border border-indigo-500/40 space-y-2 text-indigo-200">
-        <div className="flex items-center gap-2 font-bold text-sm text-white">
-          <ShieldCheck className="w-5 h-5 text-indigo-400" />
+      <div className="p-6 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-500/40 space-y-2 text-indigo-900 dark:text-indigo-200 shadow-sm">
+        <div className="flex items-center gap-2 font-bold text-sm text-indigo-800 dark:text-white">
+          <ShieldCheck className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
           <span>NON-ADVISORY NATURE OF BLINDSPOT AI</span>
         </div>
-        <p className="text-xs sm:text-sm leading-relaxed text-indigo-300">
+        <p className="text-xs sm:text-sm leading-relaxed text-indigo-700 dark:text-indigo-300">
           BlindSpot AI is an educational, reflective thinking aid. It is strictly programmed NEVER to provide professional, financial, medical, or legal advice, and NEVER to decide or recommend any choice for you.
         </p>
       </div>
 
-      <div className="space-y-8 text-sm text-gray-300 leading-relaxed">
+      <div className="space-y-8 text-sm text-foreground/90 leading-relaxed">
         <section className="space-y-3">
-          <h2 className="text-lg font-bold text-white font-display">
+          <h2 className="text-lg font-bold text-foreground font-display">
             1. Reflective and Educational Purposes Only
           </h2>
           <p>
@@ -51,7 +51,7 @@ export default function TermsPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-bold text-white font-display">
+          <h2 className="text-lg font-bold text-foreground font-display">
             2. No Professional Advice
           </h2>
           <p>
@@ -60,7 +60,7 @@ export default function TermsPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-bold text-white font-display">
+          <h2 className="text-lg font-bold text-foreground font-display">
             3. AI Output Limitations
           </h2>
           <p>
@@ -69,7 +69,7 @@ export default function TermsPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-bold text-white font-display">
+          <h2 className="text-lg font-bold text-foreground font-display">
             4. Acceptable Use
           </h2>
           <p>
@@ -78,7 +78,7 @@ export default function TermsPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-bold text-white font-display">
+          <h2 className="text-lg font-bold text-foreground font-display">
             5. Limitation of Liability
           </h2>
           <p>

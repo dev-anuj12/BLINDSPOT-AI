@@ -58,8 +58,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('bsai_theme');var d=t==='dark'||(!t||t==='system'?window.matchMedia('(prefers-color-scheme: dark)').matches:false);if(d){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}}catch(e){}})()`,
+          }}
+        />
         {gaId && (
           <>
             <Script
@@ -82,7 +87,7 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body className="min-h-screen flex flex-col bg-background text-gray-100 selection:bg-indigo-600 selection:text-white">
+      <body className="min-h-screen flex flex-col bg-background text-foreground selection:bg-indigo-600 selection:text-white">
         <Header />
         <main className="flex-1 w-full">{children}</main>
         <Footer />

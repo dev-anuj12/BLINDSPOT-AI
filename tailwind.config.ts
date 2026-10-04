@@ -10,12 +10,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#090A0F",
-        surface: "#12141F",
-        "surface-raised": "#1A1D2D",
-        "surface-hover": "#22273D",
-        border: "#2A3047",
-        "border-glow": "rgba(99, 102, 241, 0.3)",
+        background: "var(--bg-base)",
+        surface: "var(--surface-base)",
+        "surface-raised": "var(--surface-raised-base)",
+        "surface-hover": "var(--surface-hover-base)",
+        border: "var(--border-base)",
+        "border-glow": "var(--border-glow)",
+        foreground: "var(--text-primary)",
+        "text-muted": "var(--text-muted)",
         primary: {
           50: "#EEF2FF",
           100: "#E0E7FF",
