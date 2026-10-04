@@ -89,8 +89,16 @@ export default function RootLayout({
         )}
       </head>
       <body className="min-h-screen flex flex-col bg-background text-foreground selection:bg-indigo-600 selection:text-white">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-indigo-600 focus:text-white focus:rounded-xl focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 font-medium text-sm transition-all"
+        >
+          Skip to main content
+        </a>
         <Header />
-        <main className="flex-1 w-full">{children}</main>
+        <main id="main-content" className="flex-1 w-full" tabIndex={-1}>
+          {children}
+        </main>
         <Footer />
         <CookieBanner />
       </body>
