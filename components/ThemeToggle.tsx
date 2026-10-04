@@ -115,92 +115,53 @@ export function ThemeToggle() {
       aria-label={
         mounted
           ? isDark
-            ? "Switch to Light theme"
-            : "Switch to Dark theme"
+            ? "Switch to Light mode"
+            : "Switch to Dark mode"
           : "Toggle theme"
       }
       title={
         mounted
           ? isDark
-            ? "Switch to Light theme (☀️)"
-            : "Switch to Dark theme (🌙)"
+            ? "Switch to Light mode"
+            : "Switch to Dark mode"
           : "Toggle theme"
       }
-      className={`relative inline-flex items-center p-1 rounded-full w-[76px] h-[40px] min-h-[44px] min-w-[44px] border transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer select-none shadow-sm ${
-        !mounted || isDark
-          ? "bg-slate-900/90 border-slate-700"
-          : "bg-slate-200/90 border-slate-300"
-      }`}
+      className="relative flex items-center justify-center w-11 h-11 rounded-xl bg-surface-raised hover:bg-surface-hover border border-border hover:border-indigo-500/40 text-foreground transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer min-h-[44px] min-w-[44px] shadow-sm group active:scale-95"
     >
-      {/* Background Track Icons */}
-      <div className="absolute inset-0 flex items-center justify-between px-2.5 pointer-events-none">
-        {/* Sun on left */}
-        <svg
-          className={`w-4 h-4 transition-all duration-300 ${
-            !mounted || isDark ? "text-slate-500 opacity-40 scale-75" : "text-amber-500 opacity-100 scale-100 font-bold"
-          }`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-        </svg>
-
-        {/* Moon on right */}
-        <svg
-          className={`w-4 h-4 transition-all duration-300 ${
-            !mounted || isDark ? "text-indigo-400 opacity-100 scale-100 font-bold" : "text-slate-400 opacity-40 scale-75"
-          }`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-        </svg>
-      </div>
-
-      {/* Sliding Thumb Knob */}
-      <span
-        className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center shadow-md border transition-all duration-300 transform pointer-events-none ${
+      {/* Sun Icon (shown when dark to indicate clicking will turn it light) */}
+      <svg
+        className={`w-5 h-5 transition-all duration-300 transform ${
           !mounted || isDark
-            ? "translate-x-9 bg-slate-950 border-indigo-500/80 text-indigo-400 shadow-indigo-500/20"
-            : "translate-x-0.5 bg-white border-amber-400/90 text-amber-500 shadow-amber-500/30"
+            ? "text-amber-400 group-hover:rotate-45 group-hover:scale-110 opacity-100"
+            : "hidden opacity-0"
         }`}
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
-        {!mounted || isDark ? (
-          <svg
-            className="w-3.5 h-3.5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-          </svg>
-        ) : (
-          <svg
-            className="w-3.5 h-3.5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-          </svg>
-        )}
-      </span>
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+      </svg>
+
+      {/* Moon Icon (shown when light to indicate clicking will turn it dark) */}
+      <svg
+        className={`w-5 h-5 transition-all duration-300 transform ${
+          mounted && !isDark
+            ? "text-indigo-600 group-hover:-rotate-12 group-hover:scale-110 opacity-100"
+            : "hidden opacity-0"
+        }`}
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+      </svg>
     </button>
   );
 }
