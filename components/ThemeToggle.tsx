@@ -11,34 +11,45 @@ export function ThemeToggle() {
   const applyTheme = (mode: ThemeMode) => {
     if (typeof window === "undefined") return;
     
-    if (mode === "dark") {
-      document.documentElement.classList.add("dark");
-    } else if (mode === "light") {
-      document.documentElement.classList.remove("dark");
+    const root = document.documentElement;
+    const body = document.body;
+    const isDark =
+      mode === "dark" ||
+      (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    if (isDark) {
+      root.classList.add("dark");
+      root.classList.remove("light");
+      root.setAttribute("data-theme", "dark");
+      if (body) {
+        body.classList.add("dark");
+        body.classList.remove("light");
+      }
     } else {
-      const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      if (isSystemDark) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
+      root.classList.remove("dark");
+      root.classList.add("light");
+      root.setAttribute("data-theme", "light");
+      if (body) {
+        body.classList.remove("dark");
+        body.classList.add("light");
       }
     }
   };
 
   useEffect(() => {
     setMounted(true);
+    let initialMode: ThemeMode = "system";
     try {
       const saved = localStorage.getItem("bsai_theme") as ThemeMode | null;
       if (saved === "light" || saved === "dark" || saved === "system") {
-        setTheme(saved);
-        applyTheme(saved);
-      } else {
-        setTheme("system");
-        applyTheme("system");
+        initialMode = saved;
       }
     } catch {
-      applyTheme("system");
+      initialMode = "system";
     }
+
+    setTheme(initialMode);
+    applyTheme(initialMode);
 
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleSystemChange = () => {
@@ -66,18 +77,11 @@ export function ThemeToggle() {
     applyTheme(mode);
   };
 
-  // Quick single-click toggle (cycles Light <-> Dark or switches active)
-  const handleQuickToggle = () => {
-    const isCurrentlyDark = document.documentElement.classList.contains("dark");
-    const nextMode: ThemeMode = isCurrentlyDark ? "light" : "dark";
-    handleSelectTheme(nextMode);
-  };
-
   return (
     <div
       role="group"
       aria-label="Theme selector"
-      className="flex items-center p-1 rounded-2xl bg-surface-raised border border-border shadow-sm"
+      className="flex items-center p-1 rounded-2xl bg-surface-raised border border-border shadow-sm transition-colors duration-200"
     >
       {/* Light Mode Button */}
       <button
@@ -86,9 +90,9 @@ export function ThemeToggle() {
         aria-label="Light theme"
         aria-pressed={mounted && theme === "light"}
         title="Switch to Light theme"
-        className={`relative flex items-center justify-center w-10 h-10 sm:w-9 sm:h-9 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 min-h-[44px] min-w-[44px] sm:min-h-[36px] sm:min-w-[36px] ${
+        className={`relative flex items-center justify-center w-10 h-10 sm:w-9 sm:h-9 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 min-h-[44px] min-w-[44px] sm:min-h-[36px] sm:min-w-[36px] cursor-pointer ${
           mounted && theme === "light"
-            ? "bg-surface text-amber-500 shadow-sm border border-amber-500/30"
+            ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/40 shadow-sm"
             : "text-text-muted hover:text-foreground hover:bg-surface-hover"
         }`}
       >
@@ -97,7 +101,7 @@ export function ThemeToggle() {
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
-          strokeWidth="2"
+          strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
         >
@@ -113,9 +117,9 @@ export function ThemeToggle() {
         aria-label="Dark theme"
         aria-pressed={mounted && theme === "dark"}
         title="Switch to Dark theme"
-        className={`relative flex items-center justify-center w-10 h-10 sm:w-9 sm:h-9 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 min-h-[44px] min-w-[44px] sm:min-h-[36px] sm:min-w-[36px] ${
+        className={`relative flex items-center justify-center w-10 h-10 sm:w-9 sm:h-9 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 min-h-[44px] min-w-[44px] sm:min-h-[36px] sm:min-w-[36px] cursor-pointer ${
           mounted && theme === "dark"
-            ? "bg-surface text-indigo-400 shadow-sm border border-indigo-500/30"
+            ? "bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 font-bold border border-indigo-500/40 shadow-sm"
             : "text-text-muted hover:text-foreground hover:bg-surface-hover"
         }`}
       >
@@ -124,7 +128,7 @@ export function ThemeToggle() {
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
-          strokeWidth="2"
+          strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
         >
@@ -139,9 +143,9 @@ export function ThemeToggle() {
         aria-label="System theme"
         aria-pressed={mounted && theme === "system"}
         title="Follow system theme"
-        className={`relative flex items-center justify-center w-10 h-10 sm:w-9 sm:h-9 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 min-h-[44px] min-w-[44px] sm:min-h-[36px] sm:min-w-[36px] ${
+        className={`relative flex items-center justify-center w-10 h-10 sm:w-9 sm:h-9 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 min-h-[44px] min-w-[44px] sm:min-h-[36px] sm:min-w-[36px] cursor-pointer ${
           mounted && theme === "system"
-            ? "bg-surface text-indigo-600 dark:text-indigo-400 shadow-sm border border-indigo-500/30"
+            ? "bg-purple-500/15 text-purple-600 dark:text-purple-300 font-bold border border-purple-500/40 shadow-sm"
             : "text-text-muted hover:text-foreground hover:bg-surface-hover"
         }`}
       >
@@ -150,7 +154,7 @@ export function ThemeToggle() {
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
-          strokeWidth="2"
+          strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
         >

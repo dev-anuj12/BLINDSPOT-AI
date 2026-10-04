@@ -62,7 +62,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('bsai_theme');var d=t==='dark'||(!t||t==='system'?window.matchMedia('(prefers-color-scheme: dark)').matches:false);if(d){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}}catch(e){}})()`,
+            __html: `(function(){try{var t=localStorage.getItem('bsai_theme')||'system';var isDark=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);var root=document.documentElement;if(isDark){root.classList.add('dark');root.classList.remove('light');root.setAttribute('data-theme','dark');}else{root.classList.remove('dark');root.classList.add('light');root.setAttribute('data-theme','light');}}catch(e){}})()`,
           }}
         />
         {gaId && (
